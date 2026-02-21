@@ -1,0 +1,453 @@
+<template>
+  <div class="home">
+    <!-- 英雄区域 - 简洁的介绍和显眼的CTA -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">人生重置向导</h1>
+        <p class="hero-subtitle">通过五个简单步骤，重新设计你想要的生活</p>
+        
+        <div class="hero-features">
+          <div class="feature">
+            <span class="feature-icon">🎯</span>
+            <span class="feature-text">明确目标</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🗺️</span>
+            <span class="feature-text">制定计划</span>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🚀</span>
+            <span class="feature-text">开始行动</span>
+          </div>
+        </div>
+        
+        <!-- 主要CTA按钮 - 非常显眼 -->
+        <div class="hero-cta">
+          <Button 
+            size="xlarge"
+            variant="primary"
+            :rounded="true"
+            :block="true"
+            @click="startInterview"
+            class="main-cta-button"
+          >
+            <template #default>
+              <span class="cta-content">
+                <span class="cta-icon">✨</span>
+                <span class="cta-text">开始免费人生重置</span>
+                <span class="cta-arrow">→</span>
+              </span>
+            </template>
+          </Button>
+          
+          <p class="cta-note">完全免费 · 隐私保护 · 15-20分钟完成</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 简单的流程说明 -->
+    <section class="process">
+      <div class="process-content">
+        <h2 class="process-title">五个简单步骤</h2>
+        <p class="process-description">我们的向导将引导你完成整个过程</p>
+        
+        <div class="steps">
+          <div class="step" v-for="step in steps" :key="step.id">
+            <div class="step-number">{{ step.id }}</div>
+            <div class="step-info">
+              <h3 class="step-title">{{ step.title }}</h3>
+              <p class="step-description">{{ step.description }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 次要CTA -->
+        <div class="process-cta">
+          <Button 
+            size="large"
+            variant="outline"
+            :rounded="true"
+            @click="startInterview"
+            class="secondary-cta-button"
+          >
+            立即开始第一步
+          </Button>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 简单的信任标志 -->
+    <section class="trust">
+      <div class="trust-content">
+        <p class="trust-text">已帮助 <strong>1,000+</strong> 人重新设计他们的人生</p>
+        <div class="trust-badges">
+          <div class="badge">🔒 隐私保护</div>
+          <div class="badge">🆓 完全免费</div>
+          <div class="badge">📱 响应式设计</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup>
+import { useRouter } from 'vue-router'
+import Button from '@/components/common/Button.vue'
+
+const router = useRouter()
+
+const steps = [
+  {
+    id: 1,
+    title: '现状评估',
+    description: '了解当前的生活状态和满意度'
+  },
+  {
+    id: 2,
+    title: '价值观澄清',
+    description: '明确对你最重要的核心价值观'
+  },
+  {
+    id: 3,
+    title: '愿景构建',
+    description: '描绘理想生活的具体画面'
+  },
+  {
+    id: 4,
+    title: '障碍分析',
+    description: '识别可能遇到的困难和挑战'
+  },
+  {
+    id: 5,
+    title: '行动计划',
+    description: '制定具体可行的步骤和时间表'
+  }
+]
+
+const startInterview = () => {
+  router.push('/interview')
+}
+</script>
+
+<style scoped>
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 英雄区域 */
+.hero {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  opacity: 0.9;
+  margin-bottom: 2.5rem;
+  line-height: 1.4;
+}
+
+.hero-features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+}
+
+.feature-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* 主要CTA */
+.hero-cta {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.main-cta-button {
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.main-cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.cta-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.cta-icon {
+  font-size: 1.5rem;
+}
+
+.cta-arrow {
+  font-size: 1.5rem;
+  opacity: 0.8;
+}
+
+.cta-note {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  margin-top: 0.5rem;
+}
+
+/* 流程区域 */
+.process {
+  padding: 4rem 1rem;
+  background: white;
+}
+
+.process-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.process-title {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.process-description {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 3rem;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.step:hover {
+  transform: translateX(5px);
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.step-info {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.step-description {
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 次要CTA */
+.process-cta {
+  margin-top: 2rem;
+}
+
+.secondary-cta-button {
+  padding: 0.8rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* 信任区域 */
+.trust {
+  padding: 2rem 1rem;
+  background: #f8f9fa;
+  text-align: center;
+}
+
+.trust-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.trust-text {
+  font-size: 1.2rem;
+  color: #495057;
+  margin-bottom: 1.5rem;
+}
+
+.trust-text strong {
+  color: #667eea;
+}
+
+.trust-badges {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  color: #495057;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .hero-features {
+    gap: 1.5rem;
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
+  }
+  
+  .feature-text {
+    font-size: 1rem;
+  }
+  
+  .cta-content {
+    font-size: 1.1rem;
+  }
+  
+  .process-title {
+    font-size: 2rem;
+  }
+  
+  .process-description {
+    font-size: 1.1rem;
+  }
+  
+  .step {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .step:hover {
+    transform: translateY(-3px);
+  }
+  
+  .trust-badges {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .process {
+    background: #1a202c;
+  }
+  
+  .process-title {
+    color: #e2e8f0;
+  }
+  
+  .process-description {
+    color: #a0aec0;
+  }
+  
+  .step {
+    background: #2d3748;
+  }
+  
+  .step-title {
+    color: #e2e8f0;
+  }
+  
+  .step-description {
+    color: #a0aec0;
+  }
+  
+  .trust {
+    background: #2d3748;
+  }
+  
+  .trust-text {
+    color: #cbd5e0;
+  }
+  
+  .badge {
+    background: #4a5568;
+    color: #e2e8f0;
+  }
+}
+</style>

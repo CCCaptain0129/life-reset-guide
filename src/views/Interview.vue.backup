@@ -1,0 +1,607 @@
+<template>
+  <div class="interview">
+    <!-- 进度指示器 -->
+    <div class="progress-container">
+      <div class="progress-header">
+        <button class="back-button" @click="goBack" v-if="currentStep > 1">
+          ← 返回
+        </button>
+        <div class="progress-info">
+          <span class="step-counter">步骤 {{ currentStep }} / {{ totalSteps }}</span>
+          <span class="step-title">{{ currentStepData.title }}</span>
+        </div>
+      </div>
+      
+      <ProgressBar
+        :value="currentStep"
+        :max="totalSteps"
+        :height="'6px'"
+        :color="'primary'"
+        :striped="true"
+        :animated="true"
+        :show-label="false"
+        :show-info="false"
+      />
+    </div>
+    
+    <!-- 主要内容区域 -->
+    <div class="interview-content">
+      <div class="step-content">
+        <!-- 步骤说明 -->
+        <div class="step-description">
+          <h2 class="step-question">{{ currentStepData.question }}</h2>
+          <p class="step-hint" v-if="currentStepData.hint">{{ currentStepData.hint }}</p>
+        </div>
+        
+        <!-- 回答区域 -->
+        <div class="answer-area">
+          <textarea
+            v-model="answers[currentStep - 1]"
+            :placeholder="currentStepData.placeholder"
+            class="answer-input"
+            rows="6"
+            @input="saveAnswer"
+          ></textarea>
+          
+          <div class="answer-actions">
+            <button 
+              class="skip-button"
+              @click="skipQuestion"
+              v-if="currentStepData.allowSkip"
+            >
+              跳过这个问题
+            </button>
+            
+            <div class="character-count" v-if="answers[currentStep - 1]">
+              {{ answers[currentStep - 1].length }} 字
+            </div>
+          </div>
+        </div>
+        
+        <!-- 导航按钮 -->
+        <div class="navigation-buttons">
+          <Button
+            v-if="currentStep > 1"
+            variant="outline"
+            size="large"
+            :rounded="true"
+            @click="prevStep"
+            class="nav-button"
+          >
+            上一步
+          </Button>
+          
+          <Button
+            :variant="canProceed ? 'primary' : 'outline'"
+            size="large"
+            :rounded="true"
+            :block="currentStep === 1"
+            @click="nextStep"
+            :disabled="!canProceed && !currentStepData.allowSkip"
+            class="nav-button next-button"
+          >
+            <template #default>
+              <span class="button-content">
+                <span>{{ currentStep === totalSteps ? '完成访谈' : '继续下一步' }}</span>
+                <span class="button-arrow" v-if="currentStep < totalSteps">→</span>
+                <span class="button-check" v-else>✓</span>
+              </span>
+            </template>
+          </Button>
+        </div>
+        
+        <!-- 步骤提示 -->
+        <div class="step-tips" v-if="currentStepData.tips">
+          <div class="tips-header">
+            <span class="tips-icon">💡</span>
+            <span class="tips-title">提示</span>
+          </div>
+          <p class="tips-content">{{ currentStepData.tips }}</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <div class="interview-footer">
+      <p class="footer-text">
+        你的回答会自动保存，可以随时返回修改。
+        <span class="privacy-note">我们不会保存任何个人身份信息。</span>
+      </p>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import ProgressBar from '@/components/common/ProgressBar.vue'
+import Button from '@/components/common/Button.vue'
+
+const router = useRouter()
+
+// 访谈步骤数据
+const steps = [
+  {
+    id: 1,
+    title: '现状评估',
+    question: '请描述你当前的生活状态。你对哪些方面感到满意，哪些方面希望改进？',
+    hint: '可以从工作、健康、人际关系、个人成长等方面思考',
+    placeholder: '例如：我对当前的工作比较满意，但感觉缺乏个人成长空间。健康方面需要改善，经常熬夜...',
+    tips: '诚实面对自己，这是重新设计生活的第一步。',
+    allowSkip: false
+  },
+  {
+    id: 2,
+    title: '价值观澄清',
+    question: '对你来说，生活中最重要的是什么？请列出3-5个核心价值观。',
+    hint: '例如：家庭、健康、自由、成长、贡献、冒险等',
+    placeholder: '1. 健康 - 身体和心理的健康是基础\n2. 成长 - 持续学习和进步\n3. 自由 - 时间和选择的自由...',
+    tips: '价值观是你做决策的指南针，明确它们很重要。',
+    allowSkip: true
+  },
+  {
+    id: 3,
+    title: '愿景构建',
+    question: '想象一下，3年后的理想生活是什么样子？请具体描述。',
+    hint: '越具体越好，包括生活、工作、人际关系、个人状态等',
+    placeholder: '3年后，我希望：\n- 拥有一份有意义的工作，每天充满激情\n- 保持健康的生活方式，每周运动3次\n- 与家人朋友关系更加亲密...',
+    tips: '愿景是你前进的方向，大胆想象，不要设限。',
+    allowSkip: false
+  },
+  {
+    id: 4,
+    title: '障碍分析',
+    question: '要实现这个愿景，你认为最大的障碍是什么？',
+    hint: '可以从内部障碍（习惯、信念）和外部障碍（资源、环境）思考',
+    placeholder: '主要障碍可能包括：\n- 时间管理能力不足\n- 缺乏相关技能\n- 经济压力\n- 害怕失败的心理...',
+    tips: '识别障碍是克服它们的第一步。',
+    allowSkip: true
+  },
+  {
+    id: 5,
+    title: '行动计划',
+    question: '基于以上分析，你的第一个具体行动是什么？什么时候开始？',
+    hint: '从小处开始，制定一个具体、可执行的第一步',
+    placeholder: '我的第一个行动是：\n从明天开始，每天早晨6点起床，锻炼30分钟。\n这能改善我的健康和精力，为其他改变打下基础。',
+    tips: '千里之行始于足下，重要的是开始行动。',
+    allowSkip: false
+  }
+]
+
+// 状态管理
+const currentStep = ref(1)
+const answers = ref(Array(steps.length).fill(''))
+
+const totalSteps = steps.length
+
+// 计算属性
+const currentStepData = computed(() => {
+  return steps[currentStep.value - 1]
+})
+
+const canProceed = computed(() => {
+  const answer = answers.value[currentStep.value - 1]
+  return answer && answer.trim().length > 10 // 至少10个字符
+})
+
+// 方法
+const saveAnswer = () => {
+  // 保存到本地存储
+  localStorage.setItem('lifeResetAnswers', JSON.stringify(answers.value))
+}
+
+const loadAnswers = () => {
+  const saved = localStorage.getItem('lifeResetAnswers')
+  if (saved) {
+    try {
+      answers.value = JSON.parse(saved)
+    } catch (e) {
+      console.error('加载答案失败:', e)
+    }
+  }
+}
+
+const nextStep = () => {
+  if (currentStep.value < totalSteps) {
+    currentStep.value++
+  } else {
+    // 完成访谈，跳转到结果页面
+    completeInterview()
+  }
+}
+
+const prevStep = () => {
+  if (currentStep.value > 1) {
+    currentStep.value--
+  }
+}
+
+const skipQuestion = () => {
+  if (!answers.value[currentStep.value - 1]) {
+    answers.value[currentStep.value - 1] = '我选择跳过这个问题。'
+  }
+  nextStep()
+}
+
+const goBack = () => {
+  if (currentStep.value === 1) {
+    router.push('/')
+  } else {
+    prevStep()
+  }
+}
+
+const completeInterview = () => {
+  // 保存最终答案
+  saveAnswer()
+  
+  // 跳转到结果页面（暂时回到首页）
+  alert('恭喜！你已完成人生重置访谈。下一步将为你生成个性化的人生重置地图。')
+  router.push('/')
+}
+
+// 生命周期
+onMounted(() => {
+  loadAnswers()
+})
+</script>
+
+<style scoped>
+.interview {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* 进度容器 */
+.progress-container {
+  background: white;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+}
+
+.progress-info {
+  flex: 1;
+  text-align: center;
+}
+
+.step-counter {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.step-title {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* 主要内容 */
+.interview-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.step-content {
+  max-width: 700px;
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* 步骤说明 */
+.step-description {
+  margin-bottom: 2rem;
+}
+
+.step-question {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.step-hint {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 回答区域 */
+.answer-area {
+  margin-bottom: 2rem;
+}
+
+.answer-input {
+  width: 100%;
+  padding: 1.5rem;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.answer-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.answer-input::placeholder {
+  color: #adb5bd;
+}
+
+.answer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.skip-button {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.skip-button:hover {
+  background: #f8f9fa;
+  color: #495057;
+}
+
+.character-count {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* 导航按钮 */
+.navigation-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.nav-button {
+  flex: 1;
+}
+
+.next-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+}
+
+.next-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.button-arrow,
+.button-check {
+  font-size: 1.2rem;
+}
+
+/* 步骤提示 */
+.step-tips {
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #ffc107;
+}
+
+.tips-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tips-icon {
+  font-size: 1.2rem;
+}
+
+.tips-title {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.tips-content {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 底部信息 */
+.interview-footer {
+  padding: 1.5rem;
+  text-align: center;
+  background: white;
+  border-top: 1px solid #e9ecef;
+}
+
+.footer-text {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.privacy-note {
+  color: #28a745;
+  font-weight: 500;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .step-content {
+    padding: 1.5rem;
+  }
+  
+  .step-question {
+    font-size: 1.5rem;
+  }
+  
+  .step-hint {
+    font-size: 1rem;
+  }
+  
+  .answer-input {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+  }
+  
+  .nav-button {
+    width: 100%;
+  }
+  
+  .progress-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .back-button {
+    align-self: flex-start;
+  }
+  
+  .progress-info {
+    text-align: left;
+  }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .interview {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  }
+  
+  .progress-container,
+  .step-content,
+  .interview-footer {
+    background: #2d3748;
+  }
+  
+  .step-question {
+    color: #e2e8f0;
+  }
+  
+  .step-hint {
+    color: #a0aec0;
+  }
+  
+  .answer-input {
+    background: #4a5568;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  .answer-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  }
+  
+  .answer-input::placeholder {
+    color: #718096;
+  }
+  
+  .skip-button:hover {
+    background: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  .character-count {
+    color: #a0aec0;
+  }
+  
+  .step-tips {
+    background: #4a5568;
+    border-left-color: #d69e2e;
+  }
+  
+  .tips-title {
+    color: #e2e8f0;
+  }
+  
+  .tips-content {
+    color: #cbd5e0;
+  }
+  
+  .interview-footer {
+    border-top-color: #4a5568;
+  }
+  
+  .footer-text {
+    color: #a0aec0;
+  }
+  
+  .back-button {
+    color: #90cdf4;
+  }
+  
+  .back-button:hover {
+    background: #4a5568;
+  }
+  
+  .step-title {
+    color: #e2e8f0;
+  }
+  
+  .step-counter {
+    color: #a0aec0;
+  }
+}
+</style>

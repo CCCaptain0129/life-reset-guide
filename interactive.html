@@ -14,8 +14,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
         
@@ -23,583 +23,403 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
-        header {
+        /* 简洁的头部 */
+        .header {
             text-align: center;
-            padding: 40px 20px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            padding: 30px 20px;
+            margin-bottom: 20px;
         }
         
         h1 {
             font-size: 2.5rem;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: 800;
+            margin-bottom: 10px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        /* 进度指示器 */
         .progress-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
         }
         
         .progress-bar {
-            height: 10px;
-            background: #e0e0e0;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
             overflow: hidden;
         }
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-        
-        .stage-nav {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .stage-btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 15px;
             background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            font-weight: 500;
+            border-radius: 3px;
+            transition: width 0.3s ease;
         }
         
-        .stage-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        .stage-btn.completed {
-            background: #e8f5e9;
-            border-color: #4caf50;
-            color: #2e7d32;
-        }
-        
+        /* 问题区域 */
         .question-container {
-            background: white;
-            border-radius: 15px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            min-height: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
         }
         
-        .stage-title {
+        .question-title {
             font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .stage-description {
-            color: #7f8c8d;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-        }
-        
-        .question-item {
-            margin-bottom: 25px;
-        }
-        
-        .question-text {
-            font-size: 1.2rem;
-            color: #2c3e50;
+            font-weight: 700;
             margin-bottom: 15px;
-            font-weight: 500;
+            color: white;
+        }
+        
+        .question-hint {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        /* 回答区域 */
+        .answer-area {
+            margin-bottom: 25px;
         }
         
         textarea {
             width: 100%;
             padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-family: inherit;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
             resize: vertical;
-            min-height: 100px;
-            transition: border-color 0.3s;
+            min-height: 150px;
+            font-family: inherit;
+            transition: all 0.3s ease;
         }
         
         textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: white;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
         }
         
-        .navigation {
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* 提示信息 */
+        .tips-section {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 25px;
+        }
+        
+        .tips-content {
             display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-        
-        .nav-btn {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
+            align-items: flex-start;
+            gap: 10px;
             font-size: 1rem;
-            font-weight: 500;
-            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0.9;
+            line-height: 1.5;
         }
         
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        .tips-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
         }
         
-        .nav-btn:disabled {
-            background: #e0e0e0;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        /* 导航按钮 */
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         
-        .nav-btn.secondary {
+        .nav-button {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .skip-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .skip-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .next-button {
             background: white;
             color: #667eea;
-            border: 2px solid #667eea;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         
-        .save-status {
+        .next-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .next-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            padding: 20px;
             text-align: center;
-            padding: 10px;
-            color: #4caf50;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: opacity 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 20px;
         }
         
-        .save-status.show {
+        .footer-text {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        
+        .privacy-note {
+            color: #4ade80;
+            font-weight: 500;
             opacity: 1;
         }
         
+        /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 15px;
             }
             
             h1 {
                 font-size: 2rem;
             }
             
-            .stage-nav {
-                flex-direction: column;
-            }
-            
-            .stage-btn {
-                min-width: 100%;
+            .subtitle {
+                font-size: 1.1rem;
             }
             
             .question-container {
                 padding: 20px;
+            }
+            
+            .question-title {
+                font-size: 1.5rem;
+            }
+            
+            .question-hint {
+                font-size: 1rem;
+            }
+            
+            textarea {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-button {
+                width: 100%;
+            }
+            
+            .progress-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+        
+        /* 深色模式优化 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #4c51bf 0%, #6b46c1 100%);
+            }
+            
+            textarea {
+                background: rgba(255, 255, 255, 0.08);
+            }
+            
+            .tips-section {
+                background: rgba(255, 255, 255, 0.08);
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+        <!-- 简洁的头部 -->
+        <div class="header">
             <h1>人生重置向导</h1>
-            <p>通过五阶段访谈，系统化地重新设计你的生活</p>
-        </header>
+            <p class="subtitle">通过五个简单步骤，重新设计你想要的生活</p>
+        </div>
         
+        <!-- 进度指示器 -->
         <div class="progress-container">
+            <div class="progress-info">
+                <span class="step-counter">步骤 1 / 5</span>
+                <span class="step-title">现状评估</span>
+            </div>
             <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div class="progress-text">
-                <span>进度: <span id="progressText">0%</span></span>
-                <span>阶段: <span id="currentStage">1/5</span></span>
+                <div class="progress-fill" style="width: 20%"></div>
             </div>
         </div>
         
-        <div class="stage-nav" id="stageNav">
-            <!-- 阶段按钮由JavaScript动态生成 -->
+        <!-- 问题区域 -->
+        <div class="question-container">
+            <div class="question-description">
+                <h2 class="question-title">请描述你当前的生活状态。你对哪些方面感到满意，哪些方面希望改进？</h2>
+                <p class="question-hint">可以从工作、健康、人际关系、个人成长等方面思考</p>
+            </div>
+            
+            <!-- 回答区域 -->
+            <div class="answer-area">
+                <textarea placeholder="例如：我对当前的工作比较满意，但感觉缺乏个人成长空间。健康方面需要改善，经常熬夜..."></textarea>
+                
+                <!-- 提示信息 -->
+                <div class="tips-section">
+                    <div class="tips-content">
+                        <span class="tips-icon">💡</span>
+                        <span>诚实面对自己，这是重新设计生活的第一步。</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 导航按钮 -->
+            <div class="navigation-buttons">
+                <button class="nav-button back-button" onclick="window.history.back()">
+                    ← 返回首页
+                </button>
+                
+                <button class="nav-button skip-button" style="display: none;">
+                    跳过此问题
+                </button>
+                
+                <button class="nav-button next-button">
+                    下一步 →
+                </button>
+            </div>
         </div>
         
-        <div class="question-container" id="questionContainer">
-            <!-- 问题内容由JavaScript动态加载 -->
+        <!-- 底部信息 -->
+        <div class="footer">
+            <p class="footer-text">
+                你的回答会自动保存，可以随时返回修改。
+                <span class="privacy-note">我们不会保存任何个人身份信息。</span>
+            </p>
         </div>
-        
-        <div class="navigation">
-            <button class="nav-btn secondary" id="prevBtn" disabled>上一阶段</button>
-            <button class="nav-btn" id="nextBtn">下一阶段</button>
-        </div>
-        
-        <div class="save-status" id="saveStatus">答案已自动保存</div>
     </div>
-
+    
     <script>
-        // 五阶段数据
-        const stages = {
-            stage1: {
-                title: "当前生活评估",
-                description: "了解你的起点，识别当前的生活模式",
-                questions: [
-                    "请尽可能详细地描述你从早到晚的典型一天是怎样的？",
-                    "你当前的工作/职业状况如何？满意度如何？",
-                    "你的居住环境和财务状况是怎样的？",
-                    "你的人际关系和社会支持系统如何？",
-                    "在不同生活领域（工作、健康、关系等）的精力水平和满意度如何？"
-                ]
-            },
-            stage2: {
-                title: "反愿景（明确不想要的未来）",
-                description: "基于过去经历，明确你绝对不想要的生活",
-                questions: [
-                    "你绝对不想要的工作环境、职责或行业是什么？",
-                    "你觉得不适合的居住安排或地点是怎样的？",
-                    "哪些关系模式或社交动态会让你感到消耗精力？",
-                    "与健康和外表相关的，你绝对不想要的精力水平和自尊心状况是怎样的？",
-                    "哪些日常活动或责任会让你觉得没有成就感？",
-                    "什么样的财务状况会让你感到不足或带来压力？"
-                ]
-            },
-            stage3: {
-                title: "愿景（确实想要的未来）",
-                description: "描绘你真正想要的理想生活",
-                questions: [
-                    "你的财务目标是什么？这笔钱能为你实现什么？",
-                    "什么样的工作会让你觉得有意义且能投入其中？",
-                    "你理想的居住状况和地点是怎样的？",
-                    "你想要的关系类型和社交联系是怎样的？",
-                    "你希望自己看起来、感觉起来以及如何看待自己？",
-                    "理想中你每天如何花费时间和精力？"
-                ]
-            },
-            stage4: {
-                title: "时间跨度",
-                description: "为你的愿景设定现实的时间框架",
-                questions: [
-                    "你希望5-10年后达到什么样的生活状态？",
-                    "接下来一年内，你最希望实现哪些具体的变化或成就？",
-                    "当前感觉迫切需要解决的是什么？什么让你感到最紧迫？"
-                ]
-            },
-            stage5: {
-                title: "障碍评估",
-                description: "识别可能遇到的障碍，制定应对策略",
-                questions: [
-                    "当前有哪些干扰因素会分散你的注意力？",
-                    "哪些习惯可能阻碍了你的进步？",
-                    "你正在挣扎的局限性信念或恐惧是什么？",
-                    "有哪些外部约束（财务、地理、人际关系等）需要应对？"
-                ]
+        // 简单的交互逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.querySelector('textarea');
+            const nextButton = document.querySelector('.next-button');
+            const skipButton = document.querySelector('.skip-button');
+            
+            // 检查是否有保存的回答
+            const savedAnswer = localStorage.getItem('life-reset-answer-1');
+            if (savedAnswer) {
+                textarea.value = savedAnswer;
             }
-        };
-
-        // 安全的JSON解析函数
-        function safeJSONParse(jsonString, defaultValue) {
-            try {
-                if (!jsonString || jsonString === 'null') {
-                    return defaultValue;
-                }
-                
-                // 先尝试直接解析
-                return JSON.parse(jsonString);
-            } catch (error) {
-                console.warn('JSON解析错误，尝试修复:', error.message);
-                
-                // 尝试修复常见的JSON问题
-                let fixedString = jsonString;
-                
-                // 1. 移除控制字符
-                fixedString = fixedString.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
-                
-                // 2. 修复未闭合的引号
-                const quoteCount = (fixedString.match(/"/g) || []).length;
-                if (quoteCount % 2 !== 0) {
-                    fixedString = fixedString.replace(/"([^"\\]*(\\.[^"\\]*)*)"?$/g, '"$1"');
-                }
-                
-                // 3. 修复未闭合的括号
-                const openBraces = (fixedString.match(/{/g) || []).length;
-                const closeBraces = (fixedString.match(/}/g) || []).length;
-                if (openBraces > closeBraces) {
-                    fixedString += '}'.repeat(openBraces - closeBraces);
-                }
-                
-                const openBrackets = (fixedString.match(/\[/g) || []).length;
-                const closeBrackets = (fixedString.match(/\]/g) || []).length;
-                if (openBrackets > closeBrackets) {
-                    fixedString += ']'.repeat(openBrackets - closeBrackets);
-                }
-                
-                try {
-                    return JSON.parse(fixedString);
-                } catch (secondError) {
-                    console.error('修复后仍然无法解析JSON，使用默认值:', secondError.message);
-                    
-                    // 如果还是失败，尝试提取有效部分
-                    try {
-                        // 尝试找到有效的JSON对象开始
-                        const startIndex = fixedString.indexOf('{');
-                        const endIndex = fixedString.lastIndexOf('}');
-                        
-                        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-                            const extracted = fixedString.substring(startIndex, endIndex + 1);
-                            const parsed = JSON.parse(extracted);
-                            
-                            // 合并到默认结构
-                            const merged = { ...defaultValue };
-                            for (const key in parsed) {
-                                if (merged[key] && Array.isArray(parsed[key])) {
-                                    merged[key] = parsed[key].map((item, index) => 
-                                        (item !== null && item !== undefined) ? String(item) : merged[key][index]
-                                    );
-                                }
-                            }
-                            return merged;
-                        }
-                    } catch (extractError) {
-                        console.error('提取JSON也失败:', extractError.message);
-                    }
-                    
-                    return defaultValue;
+            
+            // 自动保存回答
+            textarea.addEventListener('input', function() {
+                localStorage.setItem('life-reset-answer-1', this.value);
+                updateButtonState();
+            });
+            
+            // 更新按钮状态
+            function updateButtonState() {
+                // 第一个问题不能跳过
+                if (textarea.value.trim()) {
+                    nextButton.disabled = false;
+                } else {
+                    nextButton.disabled = true;
                 }
             }
-        }
-        
-        // 默认数据结构
-        const defaultAnswers = {
-            stage1: Array(5).fill(''),
-            stage2: Array(6).fill(''),
-            stage3: Array(6).fill(''),
-            stage4: Array(3).fill(''),
-            stage5: Array(4).fill('')
-        };
-        
-        // 用户答案存储（使用安全的JSON解析）
-        let userAnswers = safeJSONParse(localStorage.getItem('lifeResetAnswers'), defaultAnswers);
-
-        // 当前阶段
-        let currentStage = 1;
-        const totalStages = 5;
-
-        // DOM元素
-        const stageNav = document.getElementById('stageNav');
-        const questionContainer = document.getElementById('questionContainer');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const currentStageText = document.getElementById('currentStage');
-        const saveStatus = document.getElementById('saveStatus');
-
-        // 初始化
-        function init() {
-            createStageNav();
-            loadStage(currentStage);
-            updateProgress();
-            updateNavigation();
-        }
-
-        // 创建阶段导航
-        function createStageNav() {
-            stageNav.innerHTML = '';
-            for (let i = 1; i <= totalStages; i++) {
-                const stageKey = `stage${i}`;
-                const stage = stages[stageKey];
-                const isCompleted = isStageCompleted(i);
-                
-                const btn = document.createElement('button');
-                btn.className = `stage-btn ${i === currentStage ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
-                btn.innerHTML = `
-                    <div style="font-size: 1.2rem; margin-bottom: 5px;">${i}</div>
-                    <div style="font-size: 0.9rem;">${stage.title}</div>
-                `;
-                btn.addEventListener('click', () => {
-                    currentStage = i;
-                    loadStage(i);
-                    updateStageNav();
-                    updateProgress();
-                    updateNavigation();
-                });
-                
-                stageNav.appendChild(btn);
-            }
-        }
-
-        // 更新阶段导航高亮
-        function updateStageNav() {
-            const buttons = stageNav.querySelectorAll('.stage-btn');
-            buttons.forEach((btn, index) => {
-                const stageNum = index + 1;
-                const isCompleted = isStageCompleted(stageNum);
-                
-                btn.classList.remove('active', 'completed');
-                if (stageNum === currentStage) {
-                    btn.classList.add('active');
-                }
-                if (isCompleted) {
-                    btn.classList.add('completed');
+            
+            // 初始化按钮状态
+            updateButtonState();
+            
+            // 下一步按钮点击事件
+            nextButton.addEventListener('click', function() {
+                if (!this.disabled) {
+                    alert('下一步功能需要完整的JavaScript实现。\n\n建议使用Vue.js版本：\nhttps://life-reset-guide.com/interview');
                 }
             });
-        }
-
-        // 检查阶段是否完成
-        function isStageCompleted(stageNum) {
-            const stageKey = `stage${stageNum}`;
-            const answers = userAnswers[stageKey];
-            return answers && answers.every(answer => answer.trim().length > 0);
-        }
-
-        // 加载阶段问题
-        function loadStage(stageNum) {
-            const stageKey = `stage${stageNum}`;
-            const stage = stages[stageKey];
-            const answers = userAnswers[stageKey];
             
-            questionContainer.innerHTML = `
-                <div class="stage-title">${stage.title}</div>
-                <div class="stage-description">${stage.description}</div>
-                <div class="questions-list">
-                    ${stage.questions.map((question, index) => `
-                        <div class="question-item">
-                            <div class="question-text">${index + 1}. ${question}</div>
-                            <textarea 
-                                id="answer-${stageNum}-${index}"
-                                placeholder="请在此输入你的回答（完全可以说'我不知道'）"
-                                oninput="saveAnswer(${stageNum}, ${index}, this.value)"
-                            >${answers[index] || ''}</textarea>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            currentStageText.textContent = `${stageNum}/${totalStages}`;
-        }
-
-        // 保存答案
-        window.saveAnswer = function(stageNum, questionIndex, value) {
-            const stageKey = `stage${stageNum}`;
-            userAnswers[stageKey][questionIndex] = value;
-            localStorage.setItem('lifeResetAnswers', JSON.stringify(userAnswers));
-            
-            // 显示保存状态
-            saveStatus.classList.add('show');
-            setTimeout(() => {
-                saveStatus.classList.remove('show');
-            }, 2000);
-            
-            // 更新UI
-            updateStageNav();
-            updateProgress();
-        };
-
-        // 更新进度
-        function updateProgress() {
-            let totalQuestions = 0;
-            let answeredQuestions = 0;
-            
-            for (let i = 1; i <= totalStages; i++) {
-                const stageKey = `stage${i}`;
-                const questions = stages[stageKey].questions.length;
-                const answers = userAnswers[stageKey];
-                
-                totalQuestions += questions;
-                answeredQuestions += answers.filter(answer => answer.trim().length > 0).length;
-            }
-            
-            const progress = totalQuestions > 0 ? Math.round((answeredQuestions / totalQuestions) * 100) : 0;
-            progressFill.style.width = `${progress}%`;
-            progressText.textContent = `${progress}%`;
-        }
-
-        // 更新导航按钮
-        function updateNavigation() {
-            prevBtn.disabled = currentStage === 1;
-            nextBtn.textContent = currentStage === totalStages ? '生成人生重置地图' : '下一阶段';
-        }
-
-        // 导航事件
-        prevBtn.addEventListener('click', () => {
-            if (currentStage > 1) {
-                currentStage--;
-                loadStage(currentStage);
-                updateStageNav();
-                updateProgress();
-                updateNavigation();
+            // 跳过按钮点击事件
+            if (skipButton) {
+                skipButton.addEventListener('click', function() {
+                    textarea.value = '我选择跳过这个问题。';
+                    localStorage.setItem('life-reset-answer-1', textarea.value);
+                    updateButtonState();
+                    nextButton.click();
+                });
             }
         });
-
-        nextBtn.addEventListener('click', () => {
-            if (currentStage < totalStages) {
-                currentStage++;
-                loadStage(currentStage);
-                updateStageNav();
-                updateProgress();
-                updateNavigation();
-            } else {
-                // 生成人生重置地图
-                generateLifeResetMap();
-            }
-        });
-
-        // 生成人生重置地图
-        function generateLifeResetMap() {
-            // 检查是否所有问题都已回答
-            let allAnswered = true;
-            for (let i = 1; i <= totalStages; i++) {
-                if (!isStageCompleted(i)) {
-                    allAnswered = false;
-                    break;
-                }
-            }
-            
-            if (!allAnswered) {
-                if (confirm('你还有未回答的问题。是否仍然生成人生重置地图？')) {
-                    redirectToMap();
-                }
-            } else {
-                redirectToMap();
-            }
-        }
-
-        // 重定向到地图页面
-        function redirectToMap() {
-            // 保存数据到服务器或本地
-            localStorage.setItem('lifeResetAnswers', JSON.stringify(userAnswers));
-            
-            // 跳转到地图生成页面
-            window.location.href = '/generate-map.html';
-        }
-
-        // 初始化应用
-        init();
     </script>
 </body>
 </html>
