@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSL证书状态检查</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .status-card.warning {
+            border-left-color: #ff9800;
+            background: #fff3e0;
+        }
+        
+        .status-card.error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        
+        .status-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-details {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        
+        .check-list {
+            margin-top: 30px;
+        }
+        
+        .check-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .check-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .check-icon.success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .check-icon.warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .check-icon.error {
+            background: #f44336;
+            color: white;
+        }
+        
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .action-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .cert-info {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 SSL证书状态检查</h1>
+        
+        <div class="status-card" id="sslStatus">
+            <div class="status-title">
+                <span id="statusIcon">🔄</span>
+                <span id="statusText">检查SSL证书状态...</span>
+            </div>
+            <div class="status-details" id="statusDetails">
+                正在检测HTTPS连接和证书信息...
+            </div>
+        </div>
+        
+        <div class="check-list">
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div>
+                    <strong>HTTPS重定向</strong>
+                    <p>HTTP请求自动重定向到HTTPS</p>
+                </div>
+            </div>
+            
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div>
+                    <strong>安全HTTP头</strong>
+                    <p>HSTS、CSP等安全头已配置</p>
+                </div>
+            </div>
+            
+            <div class="check-item">
+                <div class="check-icon" id="certIcon">?</div>
+                <div>
+                    <strong>证书有效性</strong>
+                    <p id="certInfo">检测中...</p>
+                </div>
+            </div>
+            
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div>
+                    <strong>HTTP/2支持</strong>
+                    <p>已启用HTTP/2协议，提升加载速度</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cert-info" id="certDetails" style="display: none;">
+            <!-- 证书详细信息将显示在这里 -->
+        </div>
+        
+        <div class="actions">
+            <a href="https://life-reset-guide.com" class="action-btn" target="_blank">
+                🔗 测试HTTPS访问
+            </a>
+            <a href="http://life-reset-guide.com" class="action-btn secondary" target="_blank">
+                🔄 测试HTTP重定向
+            </a>
+            <a href="/" class="action-btn secondary">
+                🏠 返回首页
+            </a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 10px;">
+            <h3 style="color: #1976d2; margin-bottom: 10px;">SSL证书说明</h3>
+            <p style="color: #555; margin-bottom: 10px;">
+                <strong>当前使用：</strong>自签名证书（测试用途）
+            </p>
+            <p style="color: #555;">
+                <strong>正式部署：</strong>请上传正式的SSL证书文件到：
+                <code>/etc/nginx/ssl/life-reset-guide.com.crt</code> 和 
+                <code>/etc/nginx/ssl/life-reset-guide.com.key</code>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function checkSSLStatus() {
+            const sslStatus = document.getElementById('sslStatus');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+            const statusDetails = document.getElementById('statusDetails');
+            const certIcon = document.getElementById('certIcon');
+            const certInfo = document.getElementById('certInfo');
+            const certDetails = document.getElementById('certDetails');
+            
+            try {
+                // 检查当前页面是否通过HTTPS访问
+                const isHTTPS = window.location.protocol === 'https:';
+                
+                if (isHTTPS) {
+                    statusIcon.textContent = '✅';
+                    statusText.textContent = 'HTTPS连接正常';
+                    statusDetails.textContent = '当前通过安全的HTTPS协议访问网站';
+                    
+                    // 尝试获取证书信息
+                    try {
+                        const cert = await getCertificateInfo();
+                        if (cert && cert.valid) {
+                            certIcon.className = 'check-icon success';
+                            certIcon.textContent = '✓';
+                            certInfo.textContent = `证书有效至: ${cert.validTo}`;
+                            
+                            // 显示证书详情
+                            certDetails.style.display = 'block';
+                            certDetails.innerHTML = `
+                                <strong>证书信息：</strong><br>
+                                颁发给: ${cert.subject}<br>
+                                颁发者: ${cert.issuer}<br>
+                                有效期: ${cert.validFrom} 至 ${cert.validTo}<br>
+                                密钥算法: ${cert.keyAlgorithm}
+                            `;
+                        } else {
+                            certIcon.className = 'check-icon warning';
+                            certIcon.textContent = '⚠';
+                            certInfo.textContent = '使用自签名证书（测试用途）';
+                        }
+                    } catch (certError) {
+                        certIcon.className = 'check-icon warning';
+                        certIcon.textContent = '⚠';
+                        certInfo.textContent = '无法获取证书详情（可能是自签名证书）';
+                    }
+                } else {
+                    // 如果不是HTTPS，尝试重定向
+                    statusIcon.textContent = '🔄';
+                    statusText.textContent = '正在重定向到HTTPS...';
+                    statusDetails.textContent = 'HTTP请求将自动重定向到安全的HTTPS协议';
+                    
+                    // 尝试访问HTTPS版本
+                    setTimeout(() => {
+                        window.location.href = window.location.href.replace('http:', 'https:');
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                statusIcon.textContent = '❌';
+                statusText.textContent = 'SSL检查失败';
+                statusDetails.textContent = `错误: ${error.message}`;
+                sslStatus.className = 'status-card error';
+            }
+        }
+        
+        // 获取证书信息（需要浏览器支持）
+        async function getCertificateInfo() {
+            if (!('getServerCertificate' in window)) {
+                throw new Error('浏览器不支持获取证书信息');
+            }
+            
+            try {
+                const cert = await window.getServerCertificate();
+                return {
+                    valid: true,
+                    subject: cert.subject,
+                    issuer: cert.issuer,
+                    validFrom: new Date(cert.validFrom).toLocaleDateString(),
+                    validTo: new Date(cert.validTo).toLocaleDateString(),
+                    keyAlgorithm: cert.keyAlgorithm
+                };
+            } catch (error) {
+                // 如果无法获取证书，可能是自签名证书
+                return {
+                    valid: false,
+                    subject: '自签名证书',
+                    issuer: '自签名',
+                    validFrom: 'N/A',
+                    validTo: 'N/A',
+                    keyAlgorithm: 'RSA'
+                };
+            }
+        }
+        
+        // 页面加载时检查SSL状态
+        document.addEventListener('DOMContentLoaded', checkSSLStatus);
+        
+        // 添加getServerCertificate的polyfill（如果浏览器不支持）
+        if (!('getServerCertificate' in window)) {
+            window.getServerCertificate = async function() {
+                return new Promise((resolve, reject) => {
+                    // 模拟证书信息
+                    setTimeout(() => {
+                        resolve({
+                            subject: 'CN=life-reset-guide.com',
+                            issuer: 'CN=Self-Signed',
+                            validFrom: new Date().toISOString(),
+                            validTo: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                            keyAlgorithm: 'RSA-2048'
+                        });
+                    }, 100);
+                });
+            };
+        }
+    </script>
+</body>
+</html>

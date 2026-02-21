@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成人生重置地图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .map-preview {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .map-content {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+        
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .action-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .action-btn.success {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+        }
+        
+        .templates {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .template-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .template-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .template-card p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>人生重置地图生成器</h1>
+            <p>基于你的回答，生成个性化的人生重置计划</p>
+        </header>
+        
+        <div class="map-preview">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">预览你的人生重置地图</h2>
+            <div class="map-content" id="mapContent">
+                正在生成地图...
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="action-btn" onclick="downloadMap('markdown')">
+                <span>📥</span> 下载Markdown文件
+            </button>
+            <button class="action-btn secondary" onclick="downloadMap('pdf')">
+                <span>📄</span> 下载PDF文件
+            </button>
+            <button class="action-btn success" onclick="printMap()">
+                <span>🖨️</span> 打印地图
+            </button>
+            <button class="action-btn secondary" onclick="copyToClipboard()">
+                <span>📋</span> 复制到剪贴板
+            </button>
+        </div>
+        
+        <div class="templates">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">配套模板工具</h2>
+            <p style="color: #7f8c8d; margin-bottom: 20px;">下载这些模板，帮助你更好地执行计划：</p>
+            
+            <div class="template-grid">
+                <div class="template-card">
+                    <h3>每日复盘模板</h3>
+                    <p>跟踪每日进展，保持动力</p>
+                    <button class="action-btn secondary" style="padding: 8px 15px; font-size: 0.9rem;" onclick="downloadTemplate('daily-review')">
+                        下载模板
+                    </button>
+                </div>
+                
+                <div class="template-card">
+                    <h3>周计划模板</h3>
+                    <p>规划每周任务，分解目标</p>
+                    <button class="action-btn secondary" style="padding: 8px 15px; font-size: 0.9rem;" onclick="downloadTemplate('weekly-plan')">
+                        下载模板
+                    </button>
+                </div>
+                
+                <div class="template-card">
+                    <h3>资源推荐清单</h3>
+                    <p>书籍、播客、课程推荐</p>
+                    <button class="action-btn secondary" style="padding: 8px 15px; font-size: 0.9rem;" onclick="downloadTemplate('resources')">
+                        查看资源
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="back-link">
+            <a href="/interactive.html">← 返回修改问卷答案</a> | 
+            <a href="/">← 返回首页</a>
+        </div>
+    </div>
+
+    <script>
+        // 安全的JSON解析函数
+        function safeJSONParse(jsonString, defaultValue) {
+            try {
+                if (!jsonString || jsonString === 'null') {
+                    return defaultValue;
+                }
+                
+                // 先尝试直接解析
+                return JSON.parse(jsonString);
+            } catch (error) {
+                console.warn('JSON解析错误，尝试修复:', error.message);
+                
+                // 尝试修复常见的JSON问题
+                let fixedString = jsonString;
+                
+                // 1. 移除控制字符
+                fixedString = fixedString.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+                
+                // 2. 修复未闭合的引号
+                const quoteCount = (fixedString.match(/"/g) || []).length;
+                if (quoteCount % 2 !== 0) {
+                    fixedString = fixedString.replace(/"([^"\\]*(\\.[^"\\]*)*)"?$/g, '"$1"');
+                }
+                
+                // 3. 修复未闭合的括号
+                const openBraces = (fixedString.match(/{/g) || []).length;
+                const closeBraces = (fixedString.match(/}/g) || []).length;
+                if (openBraces > closeBraces) {
+                    fixedString += '}'.repeat(openBraces - closeBraces);
+                }
+                
+                const openBrackets = (fixedString.match(/\[/g) || []).length;
+                const closeBrackets = (fixedString.match(/\]/g) || []).length;
+                if (openBrackets > closeBrackets) {
+                    fixedString += ']'.repeat(openBrackets - closeBrackets);
+                }
+                
+                try {
+                    return JSON.parse(fixedString);
+                } catch (secondError) {
+                    console.error('修复后仍然无法解析JSON，使用默认值');
+                    return defaultValue;
+                }
+            }
+        }
+        
+        // 从本地存储获取用户答案（使用安全的JSON解析）
+        const userAnswers = safeJSONParse(localStorage.getItem('lifeResetAnswers'), {});
+        
+        // 生成人生重置地图
+        function generateLifeResetMap() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('zh-CN');
+            
+            // 提取关键答案
+            const vision = extractVision();
+            const goals = extractGoals();
+            const skills = extractSkills();
+            const dailyRoutine = extractDailyRoutine();
+            const strategy = extractStrategy();
+            
+            const mapContent = `# 人生重置地图
+
+**生成时间：** ${dateStr}
+**用户：** 人生重置向导用户
+
+## 愿景声明
+
+${vision}
+
+## 目标层级
+
+### 长期目标（5-10年）
+${goals.longTerm}
+
+### 中期目标（1-3年）
+${goals.midTerm}
+
+### 短期目标（1-12个月）
+${goals.shortTerm}
+
+### 立即优先事项（1-4周）
+${goals.immediate}
+
+## 技能与知识发展计划
+
+${skills}
+
+## 日常结构优化
+
+${dailyRoutine}
+
+## 实施策略
+
+${strategy}
+
+## 下一步行动
+
+**立即开始（24小时内）：**
+1. 保存这份地图到安全的地方
+2. 选择1-2个立即可以开始的行动
+3. 设定第一个里程碑的检查时间
+
+**本周内完成：**
+1. 下载配套模板工具
+2. 建立每日复盘习惯
+3. 制定详细的周计划
+
+---
+*此地图为动态文档，可根据实际情况随时调整。*
+*由人生重置向导生成 - life-reset-guide.com*`;
+
+            return mapContent;
+        }
+
+        // 提取愿景
+        function extractVision() {
+            const stage3 = userAnswers.stage3 || [];
+            if (stage3.length > 0 && stage3.some(a => a.trim())) {
+                return `基于你的回答，你的理想生活是：\n${stage3.filter(a => a.trim()).join('\n')}`;
+            }
+            return "基于你的回答，你正在寻求一种更加充实、自主和有意义的生活。具体愿景需要进一步明确。";
+        }
+
+        // 提取目标
+        function extractGoals() {
+            const stage4 = userAnswers.stage4 || [];
+            
+            const longTerm = stage4[0] ? `- ${stage4[0]}` : "- 建立稳定的财务基础\n- 发展有意义的事业\n- 保持身心健康";
+            const midTerm = stage4[1] ? `- ${stage4[1]}` : "- 建立收入来源\n- 发展核心技能\n- 优化生活习惯";
+            const shortTerm = stage4[2] ? `- ${stage4[2]}` : "- 开始每日复盘\n- 建立工作节奏\n- 学习必要知识";
+            
+            return {
+                longTerm,
+                midTerm,
+                shortTerm,
+                immediate: "1. 开始使用每日复盘模板\n2. 制定第一周具体计划\n3. 建立支持系统"
+            };
+        }
+
+        // 提取技能
+        function extractSkills() {
+            const stage5 = userAnswers.stage5 || [];
+            const obstacles = stage5.filter(a => a.trim());
+            
+            if (obstacles.length > 0) {
+                return `基于你识别的障碍，需要发展的技能包括：\n${obstacles.map(o => `- 应对${o}的能力`).join('\n')}\n\n当你明确具体学习方向后，可以在资源页面找到相关推荐。`;
+            }
+            
+            return "**技能发展建议：**\n当你明确具体的学习方向后，系统会根据你的需求提供个性化资源推荐。\n\n**通用建议：**\n1. 先明确1-2个最急需的技能领域\n2. 寻找该领域的优质学习资源\n3. 制定具体的学习计划和时间安排";
+        }
+
+        // 提取日常结构
+        function extractDailyRoutine() {
+            const stage1 = userAnswers.stage1 || [];
+            const currentRoutine = stage1[0] || "暂无详细日常描述";
+            
+            return `**当前日常模式：**\n${currentRoutine}\n\n**优化建议：**\n1. 晨间：专注规划与学习（2-3小时）\n2. 日间：深度工作与创造（4-5小时）\n3. 晚间：恢复与反思（1-2小时）\n4. 睡前：准备与放松（30分钟）`;
+        }
+
+        // 提取实施策略
+        function extractStrategy() {
+            const stage5 = userAnswers.stage5 || [];
+            const obstacles = stage5.filter(a => a.trim());
+            
+            let strategy = "**第1周详细计划：**\n1. 周一：熟悉工具，设定目标\n2. 周二：开始每日复盘\n3. 周三：制定周计划\n4. 周四：执行与调整\n5. 周五：总结与庆祝\n6. 周末：休息与准备\n\n";
+            
+            strategy += "**前3个月里程碑：**\n1. 第1个月：建立基本习惯\n2. 第2个月：看到初步进展\n3. 第3个月：形成稳定系统\n\n";
+            
+            if (obstacles.length > 0) {
+                strategy += "**障碍应对策略：**\n" + obstacles.map(o => `- ${o}：制定具体应对计划`).join('\n');
+            } else {
+                strategy += "**问责建议：**\n- 使用每日复盘跟踪进度\n- 每周检查目标完成情况\n- 寻找 accountability partner";
+            }
+            
+            return strategy;
+        }
+
+        // 显示地图内容
+        function displayMap() {
+            const mapContent = generateLifeResetMap();
+            document.getElementById('mapContent').textContent = mapContent;
+        }
+
+        // 下载地图
+        function downloadMap(format) {
+            const mapContent = generateLifeResetMap();
+            const now = new Date();
+            const filename = `人生重置地图_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
+            
+            if (format === 'markdown') {
+                // 下载Markdown文件
+                const blob = new Blob([mapContent], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.md`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('Markdown文件下载成功！');
+            } else if (format === 'pdf') {
+                // 提示PDF功能
+                alert('PDF导出功能正在开发中，目前请使用打印功能或Markdown下载。');
+            }
+        }
+
+        // 打印地图
+        function printMap() {
+            window.print();
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard() {
+            const mapContent = generateLifeResetMap();
+            navigator.clipboard.writeText(mapContent).then(() => {
+                alert('地图内容已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动选择复制。');
+            });
+        }
+
+        // 下载模板
+        function downloadTemplate(templateName) {
+            const templateFiles = {
+                'daily-review': '/templates/每日复盘模板.md',
+                'weekly-plan': '/templates/周计划模板.md',
+                'resources': '/resources.html'
+            };
+            
+            if (templateFiles[templateName]) {
+                if (templateName === 'resources') {
+                    window.open(templateFiles[templateName], '_blank');
+                } else {
+                    // 直接下载文件
+                    const link = document.createElement('a');
+                    link.href = templateFiles[templateName];
+                    link.download = templateName === 'daily-review' ? '每日复盘模板.md' : '周计划模板.md';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        }
+
+        // 页面加载时显示地图
+        document.addEventListener('DOMContentLoaded', displayMap);
+    </script>
+</body>
+</html>

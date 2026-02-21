@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人生重置向导 - 系统化重新设计你的生活</title>
+  <meta name="description" content="通过五阶段访谈系统化地重新构想和重组你的生活。免费、隐私安全、基于实践验证。">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+    
+    h1 {
+      font-size: 3rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .tagline {
+      font-size: 1.5rem;
+      color: #7f8c8d;
+      margin-bottom: 30px;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+    
+    .feature-card h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+    
+    .process {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 60px;
+    }
+    
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .step {
+      text-align: center;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 5px solid #667eea;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .step-number {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      margin-bottom: 15px;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #7f8c8d;
+      border-top: 1px solid #eee;
+      margin-top: 60px;
+    }
+    
+    .feature-badge {
+      background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      margin: 20px auto;
+      display: inline-block;
+      font-weight: 500;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .tagline {
+        font-size: 1.2rem;
+      }
+      
+      .container {
+        padding: 10px;
+      }
+      
+      header {
+        padding: 40px 15px;
+        margin-bottom: 20px;
+      }
+      
+      .process-steps {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .step {
+        min-height: auto;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+      
+      .step-number {
+        width: 35px;
+        height: 35px;
+        line-height: 35px;
+        font-size: 0.9rem;
+      }
+      
+      .feature-card {
+        padding: 20px;
+        margin-bottom: 15px;
+      }
+      
+      .cta-button {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 10px;
+        margin-top: 25px !important;
+      }
+      
+      .features {
+        gap: 15px;
+      }
+      
+      div[style*="text-align: center; margin: 40px 0;"] {
+        margin: 20px 0;
+      }
+      
+      div[style*="text-align: center; margin: 40px 0;"] .cta-button {
+        display: block;
+        margin: 10px auto;
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .tagline {
+        font-size: 1.1rem;
+      }
+      
+      .process {
+        padding: 20px 15px;
+      }
+      
+      .step h4 {
+        font-size: 1.1rem;
+      }
+      
+      .step p {
+        font-size: 0.9rem;
+      }
+      
+      .cta-button {
+        font-size: 1rem;
+        padding: 10px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>人生重置向导</h1>
+      <p class="tagline">系统化地重新构想和重组你的生活</p>
+      <p>通过五阶段访谈，从迷茫到清晰，制定可执行的人生重置计划</p>
+      <a href="/interactive.html" class="cta-button" style="margin-top: 25px; display: inline-block;">
+        <i class="fas fa-play-circle"></i> 立即开始重置
+      </a>
+      <p style="margin-top: 20px; font-size: 0.9rem; color: #7f8c8d;">
+        或 <a href="#start" style="color: #667eea;">先了解五阶段流程</a>
+      </p>
+    </header>
+    
+    <section class="features">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <h3>五阶段系统访谈</h3>
+        <p>结构化评估现状、明确愿景、识别障碍，系统化了解自己真正想要的生活。</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-map-marked-alt"></i>
+        </div>
+        <h3>个性化重置地图</h3>
+        <p>自动生成包含愿景、目标、技能计划、日常结构的完整人生重置地图。</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-tools"></i>
+        </div>
+        <h3>实用工具模板</h3>
+        <p>提供每日复盘、周计划、资源推荐等实用模板，支持导出为多种格式。</p>
+      </div>
+    </section>
+    
+    <section class="process" id="start">
+      <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">五阶段重置流程</h2>
+      <div class="process-steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h4>当前生活评估</h4>
+          <p>详细了解你的现状，识别优势和需要改进的领域。</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <h4>反愿景明确</h4>
+          <p>明确你绝对不想要的生活，避免重复过去的模式。</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <h4>积极愿景构建</h4>
+          <p>描绘你真正想要的理想生活图景。</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">4</div>
+          <h4>时间跨度设定</h4>
+          <p>为愿景设定现实的时间框架和里程碑。</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">5</div>
+          <h4>障碍评估识别</h4>
+          <p>预见可能遇到的障碍，制定应对策略。</p>
+        </div>
+      </div>
+    </section>
+    
+    <section class="features">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <h3>隐私保护</h3>
+        <p>所有数据默认本地存储，无需注册即可使用，完全保护你的隐私。</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-mobile-alt"></i>
+        </div>
+        <h3>全平台支持</h3>
+        <p>响应式设计，在手机、平板、电脑上都能获得完美体验。</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <h3>学习资源</h3>
+        <p>配套书籍、播客、课程推荐，支持你的重置之旅。</p>
+      </div>
+    </section>
+    
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="interactive.html" class="cta-button" style="font-size: 1.5rem; padding: 20px 50px; margin-right: 20px;">
+        <i class="fas fa-rocket"></i> 立即开始重置
+      </a>
+      <a href="templates/download.html" class="cta-button" style="font-size: 1.5rem; padding: 20px 50px; background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);">
+        <i class="fas fa-download"></i> 下载模板工具
+      </a>
+    </div>
+  </div>
+  
+  <footer>
+    <div class="container">
+      <p>© 2026 人生重置向导 | life-reset-guide.com</p>
+      <p>让每个人都能系统化地重新设计自己的生活</p>
+      <p style="margin-top: 20px; font-size: 0.9rem;">
+        <i class="fas fa-heart" style="color: #e74c3c;"></i> 
+        基于真实需求开发，持续迭代改进
+      </p>
+    </div>
+  </footer>
+  
+  <script>
+    // 简单交互功能
+    document.addEventListener('DOMContentLoaded', function() {
+      // 平滑滚动
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 20,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+      // 开始按钮功能
+      const startButtons = document.querySelectorAll('.cta-button');
+      startButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          if (this.getAttribute('href') === '#start') {
+            e.preventDefault();
+            // 平滑滚动到流程部分
+            const processSection = document.querySelector('.process');
+            if (processSection) {
+              window.scrollTo({
+                top: processSection.offsetTop - 20,
+                behavior: 'smooth'
+              });
+            }
+          }
+        });
+      });
+      
+      // 添加一些动态效果
+      const featureCards = document.querySelectorAll('.feature-card');
+      featureCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          this.style.boxShadow = '0 15px 30px rgba(0,0,0,0.15)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+          this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

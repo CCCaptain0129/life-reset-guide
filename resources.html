@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个性化资源推荐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .user-profile {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .profile-summary {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            line-height: 1.8;
+        }
+        
+        .resources-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .resource-category {
+            margin-bottom: 40px;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .resource-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .resource-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .resource-card p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .resource-type {
+            display: inline-block;
+            padding: 3px 10px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>个性化资源推荐</h1>
+            <p>基于你的问卷回答，为你推荐相关学习资源</p>
+        </header>
+        
+        <div class="user-profile" id="userProfile">
+            <h2 style="margin-bottom: 15px; color: #2c3e50;">你的学习需求分析</h2>
+            <div class="profile-summary" id="profileSummary">
+                正在分析你的问卷回答...
+            </div>
+        </div>
+        
+        <div class="resources-container">
+            <div class="resource-category" id="resourcesContent">
+                <!-- 资源内容由JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="back-link">
+            <a href="/generate-map.html">← 返回地图生成器</a> | 
+            <a href="/">← 返回首页</a>
+        </div>
+    </div>
+
+    <script>
+        // 从本地存储获取用户答案
+        const userAnswers = JSON.parse(localStorage.getItem('lifeResetAnswers')) || {};
+        
+        // 资源数据库
+        const resourceDatabase = {
+            // 财务相关资源
+            finance: [
+                {
+                    title: "《聪明的投资者》",
+                    type: "书籍",
+                    description: "价值投资经典，适合想要建立稳健投资理念的人",
+                    reason: "基于你的财务目标推荐"
+                },
+                {
+                    title: "知行小酒馆",
+                    type: "播客",
+                    description: "投资与生活平衡，适合普通人的理财指南",
+                    reason: "帮助你实现财务规划"
+                }
+            ],
+            
+            // 效率与时间管理
+            productivity: [
+                {
+                    title: "《原子习惯》",
+                    type: "书籍",
+                    description: "微小习惯的巨大力量，适合想要建立持久习惯的人",
+                    reason: "基于你的习惯改进需求"
+                },
+                {
+                    title: "《深度工作》",
+                    type: "书籍",
+                    description: "在分心时代保持专注的方法",
+                    reason: "帮助你提高工作效率"
+                }
+            ],
+            
+            // 内容创作与个人品牌
+            content: [
+                {
+                    title: "《创作者》",
+                    type: "书籍",
+                    description: "数字时代的创作心法和商业模式",
+                    reason: "基于你的内容创作兴趣"
+                },
+                {
+                    title: "小红书创作学院",
+                    type: "课程",
+                    description: "平台官方课程，针对小红书运营",
+                    reason: "帮助你开始内容创作"
+                }
+            ],
+            
+            // 健康与生活方式
+            health: [
+                {
+                    title: "《精力管理》",
+                    type: "书籍",
+                    description: "管理而非节省精力，实现高效能",
+                    reason: "基于你的精力管理需求"
+                },
+                {
+                    title: "fit4life",
+                    type: "播客",
+                    description: "女性健康与运动话题",
+                    reason: "帮助你建立健康习惯"
+                }
+            ],
+            
+            // 通用工具
+            tools: [
+                {
+                    title: "飞书多维表格",
+                    type: "工具",
+                    description: "数据管理与协作工具，适合项目跟踪",
+                    reason: "帮助你系统化管理目标"
+                },
+                {
+                    title: "Notion",
+                    type: "工具",
+                    description: "一体化工作空间，笔记、任务、数据库",
+                    reason: "适合知识管理和个人规划"
+                }
+            ]
+        };
+        
+        // 分析用户需求
+        function analyzeUserNeeds() {
+            const needs = {
+                finance: false,
+                productivity: false,
+                content: false,
+                health: false,
+                tools: true // 工具总是推荐
+            };
+            
+            const stage3 = userAnswers.stage3 || [];
+            const stage5 = userAnswers.stage5 || [];
+            
+            // 分析财务需求
+            const financeKeywords = ['财务', '投资', '收入', '赚钱', '理财', '经济'];
+            if (stage3.some(answer => financeKeywords.some(keyword => answer.includes(keyword)))) {
+                needs.finance = true;
+            }
+            
+            // 分析效率需求
+            const productivityKeywords = ['时间', '效率', '专注', '拖延', '习惯', '计划'];
+            if (stage5.some(answer => productivityKeywords.some(keyword => answer.includes(keyword)))) {
+                needs.productivity = true;
+            }
+            
+            // 分析内容创作需求
+            const contentKeywords = ['内容', '创作', '写作', '视频', '小红书', '账号'];
+            if (stage3.some(answer => contentKeywords.some(keyword => answer.includes(keyword)))) {
+                needs.content = true;
+            }
+            
+            // 分析健康需求
+            const healthKeywords = ['健康', '运动', '精力', '睡眠', '饮食', '锻炼'];
+            if (stage5.some(answer => healthKeywords.some(keyword => answer.includes(keyword)))) {
+                needs.health = true;
+            }
+            
+            return needs;
+        }
+        
+        // 生成用户画像
+        function generateUserProfile() {
+            const needs = analyzeUserNeeds();
+            const profile = [];
+            
+            if (needs.finance) profile.push("财务规划与投资");
+            if (needs.productivity) profile.push("时间管理与效率提升");
+            if (needs.content) profile.push("内容创作与个人品牌");
+            if (needs.health) profile.push("健康管理与精力恢复");
+            
+            if (profile.length === 0) {
+                return "你尚未提供足够的信息来生成个性化推荐。请先完成问卷，或直接浏览通用资源。";
+            }
+            
+            return `基于你的回答，系统识别出你对以下领域有学习需求：\n\n${profile.map(item => `• ${item}`).join('\n')}\n\n以下是为你精选的推荐资源：`;
+        }
+        
+        // 生成资源推荐
+        function generateResources() {
+            const needs = analyzeUserNeeds();
+            let hasResources = false;
+            
+            let html = '';
+            
+            // 财务资源
+            if (needs.finance && resourceDatabase.finance.length > 0) {
+                hasResources = true;
+                html += `
+                    <div class="resource-category">
+                        <h2 class="category-title">💰 财务与投资</h2>
+                        <div class="resource-grid">
+                            ${resourceDatabase.finance.map(resource => `
+                                <div class="resource-card">
+                                    <span class="resource-type">${resource.type}</span>
+                                    <h3>${resource.title}</h3>
+                                    <p>${resource.description}</p>
+                                    <small style="color: #666;">${resource.reason}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 效率资源
+            if (needs.productivity && resourceDatabase.productivity.length > 0) {
+                hasResources = true;
+                html += `
+                    <div class="resource-category">
+                        <h2 class="category-title">⏰ 效率与时间管理</h2>
+                        <div class="resource-grid">
+                            ${resourceDatabase.productivity.map(resource => `
+                                <div class="resource-card">
+                                    <span class="resource-type">${resource.type}</span>
+                                    <h3>${resource.title}</h3>
+                                    <p>${resource.description}</p>
+                                    <small style="color: #666;">${resource.reason}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 内容创作资源
+            if (needs.content && resourceDatabase.content.length > 0) {
+                hasResources = true;
+                html += `
+                    <div class="resource-category">
+                        <h2 class="category-title">✍️ 内容创作与个人品牌</h2>
+                        <div class="resource-grid">
+                            ${resourceDatabase.content.map(resource => `
+                                <div class="resource-card">
+                                    <span class="resource-type">${resource.type}</span>
+                                    <h3>${resource.title}</h3>
+                                    <p>${resource.description}</p>
+                                    <small style="color: #666;">${resource.reason}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 健康资源
+            if (needs.health && resourceDatabase.health.length > 0) {
+                hasResources = true;
+                html += `
+                    <div class="resource-category">
+                        <h2 class="category-title">💪 健康与生活方式</h2>
+                        <div class="resource-grid">
+                            ${resourceDatabase.health.map(resource => `
+                                <div class="resource-card">
+                                    <span class="resource-type">${resource.type}</span>
+                                    <h3>${resource.title}</h3>
+                                    <p>${resource.description}</p>
+                                    <small style="color: #666;">${resource.reason}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 工具资源（总是显示）
+            if (resourceDatabase.tools.length > 0) {
+                hasResources = true;
+                html += `
+                    <div class="resource-category">
+                        <h2 class="category-title">🛠️ 实用工具推荐</h2>
+                        <div class="resource-grid">
+                            ${resourceDatabase.tools.map(resource => `
+                                <div class="resource-card">
+                                    <span class="resource-type">${resource.type}</span>
+                                    <h3>${resource.title}</h3>
+                                    <p>${resource.description}</p>
+                                    <small style="color: #666;">${resource.reason}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (!hasResources) {
+                html = `
+                    <div class="no-data">
+                        <h3>尚未检测到具体学习需求</h3>
+                        <p>请先完成问卷，或直接浏览通用工具推荐。</p>
+                        <p>你也可以<a href="/interactive.html">返回问卷</a>提供更多信息。</p>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+        
+        // 页面加载时显示内容
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('profileSummary').textContent = generateUserProfile();
+            document.getElementById('resourcesContent').innerHTML = generateResources();
+        });
+    </script>
+</body>
+</html>
